@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Costituzione Pokémon Edition</title>
+<style>
+  /* Base & Reset */
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#1a1a1a;color:#eee;min-height:100vh;padding:2rem 1rem}
+  .container{max-width:850px;margin:0 auto}
+  
+  h1{font-size:24px;text-align:center;margin-bottom:5px;color:#fff}
+  .subtitle{text-align:center;font-size:14px;color:#aaa;margin-bottom:2rem}
+
+  /* Wizard Steps Bar */
+  .step-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2rem}
+  .step-dot{width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;background:#333;color:#888;border:2px solid #444}
+  .step-dot.active{background:#ffcb05;color:#2a75bb;border-color:#2a75bb;box-shadow: 0 0 10px #ffcb05}
+  .step-dot.done{background:#2a75bb;color:#fff;border-color:#1d448a}
+  .step-line{width:40px;height:3px;background:#333}
+
+  /* UI Elements */
+  .card-selection-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:2rem}
+  .item-card{background:#252525;border:2px solid #444;border-radius:12px;padding:15px;text-align:center;cursor:pointer;transition:0.2s}
+  .item-card:hover{border-color:#ffcb05;background:#333}
+  .item-card.selected{border-color:#ffcb05;background:#2a75bb22;box-shadow:0 0 15px rgba(255,203,5,0.3)}
+  
+  .btn-group{display:flex;justify-content:space-between;margin-top:20px}
+  .btn{padding:12px 25px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;font-size:14px;transition:0.2s}
+  .btn-next{background:#ffcb05;color:#1d448a}
+  .btn-back{background:transparent;color:#aaa;border:1px solid #444}
+  .btn:disabled{opacity:0.3;cursor:not-allowed}
+
+  /* Form Elements */
+  label{display:block;margin-bottom:8px;font-weight:600;font-size:14px;color:#ffcb05}
+  textarea, input, select{width:100%;padding:12px;border-radius:8px;border:1px solid #444;background:#252525;color:#fff;margin-bottom:15px;font-family:inherit}
+
+  /* Color Picker */
+  .color-picker{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .color-opt{width:40px;height:40px;border-radius:50%;cursor:pointer;border:3px solid #1a1a1a;transition:0.2s}
+  .color-opt.active{border-color:#fff;transform:scale(1.1)}
+
+  /* --- POKEMON CARD STYLE --- */
+  .pokemon-card {
+    width: 350px;
+    height: 490px;
+    border-radius: 18px;
+    position: relative;
+    padding: 15px;
+    color: #000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background-size: cover;
+    margin: 0 auto;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px;
+  }
+  .card-name { font-size: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: -1px; }
+  .card-hp { font-size: 18px; font-weight: bold; }
+  .card-hp span { font-size: 10px; }
+
+  .image-frame {
+    width: 100%;
+    height: 190px;
+    background: #000;
+    margin: 8px 0;
+    border: 4px solid #f2f2f2;
+    box-shadow: inset 0 0 10px #000;
+    overflow: hidden;
+    position: relative;
+  }
+  .image-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ability-bar {
+    background: linear-gradient(90deg, #333, #666);
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .attack-box {
+    background: rgba(255,255,255,0.8);
+    border-radius: 5px;
+    padding: 10px;
+    min-height: 100px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .attack-name { font-weight: bold; font-size: 14px; margin-bottom: 4px; display: block; border-bottom: 1px solid #ccc; }
+  .attack-desc { font-size: 11px; line-height: 1.3; font-style: italic; }
+
+  .footer-box {
+    background: rgba(0,0,0,0.05);
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 10px;
+  }
+  .footer-label { font-weight: bold; text-transform: uppercase; font-size: 9px; opacity: 0.7; }
+
+  .v-rule {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    background: #000;
+    color: #fff;
+    font-size: 7px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    width: 140px;
+    line-height: 1;
+  }
+
+  /* Printing */
+  @media print { .no-print { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="no-print">
+    <h1>Costituzione Poké-Card Maker</h1>
+    <p class="subtitle">Trasforma i valori civili in una carta leggendaria</p>
+  </div>
+  
+  <div id="app"></div>
+</div>
+
+<input type="file" id="fileInput" hidden onchange="handleFile(event)">
+
+<script>
+// Dati originali mantenuti dal tuo file
+const CHARS = [
+  {id:"caino",name:"Caino",sym:"C",origin:"Genesi",desc:"Il primo figlio di Adamo ed Eva, coltivatore della terra."},
+  {id:"noe",name:"Noè",sym:"N",origin:"Genesi / Corano",desc:"Il costruttore dell'arca che preservò la vita."},
+  {id:"abramo",name:"Abramo",sym:"A",origin:"Genesi / Corano",desc:"Il patriarca che visse come straniero."},
+  {id:"agar",name:"Agar",sym:"Ag",origin:"Genesi / Corano",desc:"Madre di Ismaele, respinta eppure salvata."},
+  {id:"mose",name:"Mosè",sym:"M",origin:"Esodo / Corano",desc:"Il liberatore dalla schiavitù e dall'ingiustizia."},
+  {id:"sherazad",name:"Sherazad",sym:"Sh",origin:"Mille e una notte",desc:"La narratrice che si salvò con la parola."},
+];
+
+const ARTICLES = [
+  {id:"3",title:"Art. 3",sub:"Uguaglianza",text:"Pari dignità sociale senza distinzione di sesso, razza o religione."},
+  {id:"9",title:"Art. 9",sub:"Ambiente",text:"Tutela il paesaggio e il patrimonio storico della Nazione."},
+  {id:"10",title:"Art. 10",sub:"Asilo",text:"Diritto d'asilo allo straniero impedito nelle libertà."},
+  {id:"11",title:"Art. 11",sub:"Pace",text:"L'Italia ripudia la guerra come strumento di offesa."},
+  {id:"27",title:"Art. 27",sub:"Umanità",text:"Le pene non possono essere contrarie al senso di umanità."},
+  {id:"32",title:"Art. 32",sub:"Salute",text:"Tutela la salute come fondamentale diritto dell'individuo."}
+];
+
+const TYPES = [
+  {id:"fire", name:"Fuoco", bg:"linear-gradient(145deg, #ff5f6d, #ffc371)", color:"#ff5f6d"},
+  {id:"water", name:"Acqua", bg:"linear-gradient(145deg, #2193b0, #6dd5ed)", color:"#2193b0"},
+  {id:"grass", name:"Erba", bg:"linear-gradient(145deg, #11998e, #38ef7d)", color:"#11998e"},
+  {id:"electric", name:"Elettro", bg:"linear-gradient(145deg, #fceeb5, #f5d020)", color:"#f5d020"},
+  {id:"psychic", name:"Psico", bg:"linear-gradient(145deg, #eecda3, #ef629f)", color:"#ef629f"},
+  {id:"fighting", name:"Lotta", bg:"linear-gradient(145deg, #ba8b02, #181818)", color:"#ba8b02"},
+  {id:"steel", name:"Acciaio", bg:"linear-gradient(145deg, #bdc3c7, #2c3e50)", color:"#bdc3c7"},
+  {id:"dark", name:"Oscurità", bg:"linear-gradient(145deg, #232526, #414345)", color:"#232526"}
+];
+
+let state = {
+  step: 1,
+  char: null,
+  article: null,
+  type: 'fire',
+  connection: "",
+  association: "",
+  imgData: null
+};
+
+function render() {
+  const app = document.getElementById('app');
+  let html = renderSteps();
+
+  if(state.step === 1) {
+    html += `<div class="card-selection-grid">`;
+    CHARS.forEach(c => {
+      html += `<div class="item-card ${state.char === c.id ? 'selected' : ''}" onclick="selectChar('${c.id}')">
+        <div style="font-size:24px;margin-bottom:5px">👤</div>
+        <strong>${c.name}</strong><br><small>${c.origin}</small>
+      </div>`;
+    });
+    html += `</div><div class="btn-group"><span></span><button class="btn btn-next" ${!state.char?'disabled':''} onclick="goStep(2)">Avanti</button></div>`;
+  } 
+  
+  else if(state.step === 2) {
+    html += `<div class="card-selection-grid">`;
+    ARTICLES.forEach(a => {
+      html += `<div class="item-card ${state.article === a.id ? 'selected' : ''}" onclick="selectArt('${a.id}')">
+        <strong>${a.title}</strong><br><small>${a.sub}</small>
+      </div>`;
+    });
+    html += `</div><div class="btn-group"><button class="btn btn-back" onclick="goStep(1)">Indietro</button><button class="btn btn-next" ${!state.article?'disabled':''} onclick="goStep(3)">Avanti</button></div>`;
+  }
+
+  else if(state.step === 3) {
+    html += `
+      <label>Scegli l'elemento della carta</label>
+      <div class="color-picker">
+        ${TYPES.map(t => `<div class="color-opt ${state.type===t.id?'active':''}" style="background:${t.bg}" onclick="selectType('${t.id}')"></div>`).join('')}
+      </div>
+      
+      <label>Immagine Personaggio</label>
+      <button class="btn btn-back" style="width:100%;margin-bottom:15px" onclick="document.getElementById('fileInput').click()">📸 Carica Foto</button>
+      
+      <label>Perché questo collegamento?</label>
+      <textarea id="conn" oninput="state.connection=this.value">${state.connection}</textarea>
+      
+      <label>Associazione che tutela questo diritto oggi</label>
+      <input type="text" id="assoc" value="${state.association}" oninput="state.association=this.value">
+      
+      <div class="btn-group">
+        <button class="btn btn-back" onclick="goStep(2)">Indietro</button>
+        <button class="btn btn-next" onclick="goStep(4)">Genera Carta V</button>
+      </div>
+    `;
+  }
+
+  else if(state.step === 4) {
+    const c = CHARS.find(x => x.id === state.char);
+    const a = ARTICLES.find(x => x.id === state.article);
+    const t = TYPES.find(x => x.id === state.type);
+    
+    html += `
+      <div class="pokemon-card" style="background: ${t.bg}">
+        <div class="card-header">
+          <div class="card-name">${c.name} <span style="font-size:12px">V</span></div>
+          <div class="card-hp"><span>HP</span> ${a.id}0</div>
+        </div>
+        
+        <div class="image-frame">
+          ${state.imgData ? `<img src="${state.imgData}">` : `<div style="color:#fff;text-align:center;padding-top:80px">Nessuna Immagine</div>`}
+        </div>
+
+        <div class="ability-bar">
+          <span>COSTITUZIONE ITALIANA</span>
+          <span>${a.title}</span>
+        </div>
+
+        <div class="attack-box">
+          <span class="attack-name">Diritto Fondamentale: ${a.sub}</span>
+          <p class="attack-desc">"${state.connection || 'Nessun collegamento inserito...'}"</p>
+        </div>
+
+        <div class="footer-box">
+          <div class="footer-label">Associazione Attiva</div>
+          <div style="font-weight:bold">${state.association || 'Cerca un ente su Google'}</div>
+        </div>
+
+        <div class="v-rule">
+          <strong>REGOLA V:</strong> Quando il diritto viene calpestato, la Repubblica interviene per rimuovere gli ostacoli.
+        </div>
+      </div>
+      
+      <div class="btn-group no-print" style="justify-content:center; gap:20px">
+        <button class="btn btn-back" onclick="goStep(3)">Modifica</button>
+        <button class="btn btn-next" onclick="window.print()">Stampa Carta</button>
+      </div>
+    `;
+  }
+
+  app.innerHTML = html;
+}
+
+function renderSteps() {
+  let s = `<div class="step-bar no-print">`;
+  for(let i=1; i<=4; i++) {
+    let cls = state.step === i ? 'active' : (state.step > i ? 'done' : '');
+    s += `<div class="step-dot ${cls}">${i}</div>`;
+    if(i<4) s += `<div class="step-line"></div>`;
+  }
+  return s + `</div>`;
+}
+
+// Actions
+function selectChar(id) { state.char = id; render(); }
+function selectArt(id) { state.article = id; render(); }
+function selectType(id) { state.type = id; render(); }
+function goStep(n) { state.step = n; render(); }
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    state.imgData = event.target.result;
+    render();
+  };
+  reader.readAsDataURL(file);
+}
+
+render();
+</script>
+
+</body>
+</html>
