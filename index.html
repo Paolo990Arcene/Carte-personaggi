@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Costituzione Pokémon Edition - Full</title>
+    <title>Costituzione Pokémon Edition - Pro</title>
     <style>
         :root { --pkm-color: #ffcb05; }
         body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .setup-panel { background: #2a2a2a; padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; margin-bottom: 20px; border: 2px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        /* Pannello di Controllo */
+        .setup-panel { background: #2a2a2a; padding: 25px; border-radius: 15px; width: 100%; max-width: 650px; margin-bottom: 20px; border: 2px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         h2 { color: #ffcb05; text-align: center; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
-        label { font-weight: bold; font-size: 13px; color: #aaa; display: block; margin-top: 12px; }
+        label { font-weight: bold; font-size: 13px; color: #aaa; display: block; margin-top: 15px; }
         select, textarea, input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-family: inherit; font-size: 14px; }
         
+        /* Controlli Immagine */
+        .img-controls { background: #333; padding: 15px; border-radius: 10px; margin-top: 10px; border: 1px solid #555; }
+        .control-row { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .control-row span { font-size: 12px; min-width: 80px; color: #ffcb05; }
+        input[type=range] { flex: 1; cursor: pointer; accent-color: #ffcb05; }
+
         /* STILE CARTA POKEMON V */
         #pokemon-card {
             width: 360px; height: 510px; border-radius: 20px; position: relative;
@@ -25,8 +33,17 @@
         .card-hp { color: #d32f2f; font-size: 22px; font-weight: 900; }
         .card-hp span { font-size: 10px; margin-right: 2px; }
         
-        .card-image-container { width: 100%; height: 210px; background: #000; margin: 10px 0; border: 4px solid #fff; box-shadow: inset 0 0 10px #000; overflow: hidden; position: relative; }
-        .card-image-container img { width: 100%; height: 100%; object-fit: cover; }
+        /* Cornice Immagine con Zoom/Posizionamento */
+        .card-image-container { 
+            width: 100%; height: 210px; background: #000; margin: 10px 0; 
+            border: 4px solid #fff; box-shadow: inset 0 0 10px #000; 
+            overflow: hidden; position: relative; 
+        }
+        #out-img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.1s, object-position 0.1s;
+        }
         .char-sym-overlay { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; }
 
         .ability-bar { background: #333; color: white; padding: 4px 12px; font-size: 10px; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 8px; text-transform: uppercase; }
@@ -37,22 +54,22 @@
         .footer-info { margin-top: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 5px; }
         .v-rule { position: absolute; bottom: 12px; left: 25px; right: 25px; background: #000; color: #fff; font-size: 7px; padding: 4px; border-radius: 4px; text-align: center; line-height: 1.1; }
 
-        .btn { background: #ffcb05; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; font-size: 16px; margin-top: 10px; transition: 0.2s; text-transform: uppercase; }
+        .btn { background: #ffcb05; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; font-size: 16px; margin-top: 15px; transition: 0.2s; text-transform: uppercase; }
         .btn:hover { background: #e6b800; transform: translateY(-2px); }
         
         .color-picker { display: flex; gap: 10px; margin: 10px 0; justify-content: center; flex-wrap: wrap; }
         .dot { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; }
         .dot.active { border-color: white; box-shadow: 0 0 10px white; }
 
-        @media print { .setup-panel, .no-print { display: none; } body { background: white; } #pokemon-card { display: block; box-shadow: none; } }
+        @media print { .setup-panel, .no-print { display: none; } body { background: white; } #pokemon-card { display: block; box-shadow: none; margin: 0; } }
     </style>
 </head>
 <body>
 
     <div class="setup-panel no-print">
-        <h2>Card Creator: Bibbia & Costituzione</h2>
+        <h2>Pokémon Card Editor - Pro</h2>
         
-        <label>1. Seleziona Personaggio:</label>
+        <label>1. Scegli il Personaggio:</label>
         <select id="char">
             <option value="Caino" data-sym="C">Caino (Genesi)</option>
             <option value="Noè" data-sym="N">Noè (Genesi / Corano)</option>
@@ -67,7 +84,7 @@
             <option value="Sherazad" data-sym="Sh">Sherazad (Mille e una notte)</option>
         </select>
 
-        <label>2. Seleziona Articolo:</label>
+        <label>2. Scegli l'Articolo:</label>
         <select id="art">
             <option value="3">Art. 3 - Uguaglianza</option>
             <option value="9">Art. 9 - Tutela dell'ambiente</option>
@@ -77,7 +94,7 @@
             <option value="32">Art. 32 - Diritto alla salute</option>
         </select>
 
-        <label>3. Colore della Carta (Tipo):</label>
+        <label>3. Colore della Carta:</label>
         <div class="color-picker" id="colorPicker">
             <div class="dot active" style="background: linear-gradient(145deg, #ff5f6d, #b91d1d)" data-color="linear-gradient(145deg, #ff5f6d, #b91d1d)" onclick="selectColor(this)"></div>
             <div class="dot" style="background: linear-gradient(145deg, #4facfe, #0061ff)" data-color="linear-gradient(145deg, #4facfe, #0061ff)" onclick="selectColor(this)"></div>
@@ -87,14 +104,29 @@
             <div class="dot" style="background: linear-gradient(145deg, #ffd700, #b8860b)" data-color="linear-gradient(145deg, #ffd700, #b8860b)" onclick="selectColor(this)"></div>
         </div>
 
-        <label>4. Immagine Personaggio:</label>
-        <input type="file" id="imgInput" accept="image/*">
+        <label>4. Carica e Regola Immagine:</label>
+        <input type="file" id="imgInput" accept="image/*" onchange="previewImage(this)">
+        
+        <div class="img-controls">
+            <div class="control-row">
+                <span>Zoom:</span>
+                <input type="range" id="zoom" min="1" max="3" step="0.1" value="1" oninput="updateImgStyle()">
+            </div>
+            <div class="control-row">
+                <span>Orizzontale:</span>
+                <input type="range" id="posX" min="0" max="100" step="1" value="50" oninput="updateImgStyle()">
+            </div>
+            <div class="control-row">
+                <span>Verticale:</span>
+                <input type="range" id="posY" min="0" max="100" step="1" value="50" oninput="updateImgStyle()">
+            </div>
+        </div>
 
-        <label>5. Spiegazione del Collegamento:</label>
-        <textarea id="desc" rows="3" placeholder="Perché questo personaggio rappresenta questo articolo?"></textarea>
+        <label>5. Spiegazione Collegamento:</label>
+        <textarea id="desc" rows="3" placeholder="Scrivi qui il collegamento tra personaggio e articolo..."></textarea>
 
-        <label>6. Associazione di oggi:</label>
-        <input type="text" id="assoc" placeholder="Es: Emergency, Amnesty, Legambiente...">
+        <label>6. Una ONG che tutela quel diritto e descrizione:</label>
+        <textarea id="assoc" rows="2" placeholder="Inserisci il nome della ONG e cosa fa oggi per proteggere questo diritto..."></textarea>
 
         <button class="btn" onclick="generate()">Genera Carta V</button>
     </div>
@@ -121,7 +153,7 @@
         </div>
 
         <div class="footer-info">
-            Associazione: <span id="out-assoc" style="color:#d32f2f">---</span>
+            <span id="out-assoc">---</span>
         </div>
 
         <div class="v-rule">
@@ -140,6 +172,32 @@
             document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
             el.classList.add('active');
             currentBg = el.getAttribute('data-color');
+            if(document.getElementById('pokemon-card').style.display === "block") {
+                document.getElementById('pokemon-card').style.background = currentBg;
+            }
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('out-img').src = e.target.result;
+                    // Mostra la carta per permettere la regolazione
+                    document.getElementById('pokemon-card').style.display = "block";
+                    updateImgStyle();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateImgStyle() {
+            const img = document.getElementById('out-img');
+            const zoom = document.getElementById('zoom').value;
+            const px = document.getElementById('posX').value;
+            const py = document.getElementById('posY').value;
+            
+            img.style.transform = `scale(${zoom})`;
+            img.style.objectPosition = `${px}% ${py}%`;
         }
 
         function generate() {
@@ -151,7 +209,7 @@
             const artNum = artSelect.value;
             const artFullText = artSelect.options[artSelect.selectedIndex].text;
             const description = document.getElementById('desc').value || "Spiegazione non inserita.";
-            const association = document.getElementById('assoc').value || "Associazione non indicata.";
+            const association = document.getElementById('assoc').value || "ONG non indicata.";
 
             // Aggiornamento Campi Carta
             document.getElementById('out-name').innerText = name + " V";
@@ -165,14 +223,7 @@
             // Colore di fondo
             document.getElementById('pokemon-card').style.background = currentBg;
             
-            // Caricamento Immagine
-            const file = document.getElementById('imgInput').files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => document.getElementById('out-img').src = e.target.result;
-                reader.readAsDataURL(file);
-            }
-
+            // Mostra tutto
             document.getElementById('pokemon-card').style.display = "block";
             document.getElementById('printSection').style.display = "block";
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
