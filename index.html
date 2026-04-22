@@ -3,107 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Costituzione Pokémon Edition</title>
+    <title>Costituzione Pokémon Edition - Full</title>
     <style>
         :root { --pkm-color: #ffcb05; }
         body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .setup-panel { background: #2a2a2a; padding: 20px; border-radius: 15px; width: 100%; max-width: 500px; margin-bottom: 20px; border: 2px solid #444; }
-        select, textarea, input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; }
+        .setup-panel { background: #2a2a2a; padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; margin-bottom: 20px; border: 2px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #ffcb05; text-align: center; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
+        label { font-weight: bold; font-size: 13px; color: #aaa; display: block; margin-top: 12px; }
+        select, textarea, input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-family: inherit; font-size: 14px; }
         
-        /* STILE CARTA POKEMON */
+        /* STILE CARTA POKEMON V */
         #pokemon-card {
-            width: 350px; height: 500px; border-radius: 20px; position: relative;
-            padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            width: 360px; height: 510px; border-radius: 20px; position: relative;
+            padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             background: linear-gradient(145deg, #ffd700, #b8860b);
-            color: #000; overflow: hidden; border: 8px solid #f1f1f1;
-            display: none; /* Appare solo dopo la generazione */
+            color: #000; overflow: hidden; border: 10px solid #f1f1f1;
+            display: none; margin: 20px auto;
         }
         .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .card-name { font-size: 22px; text-transform: uppercase; }
-        .card-hp { color: red; font-size: 20px; }
-        .card-image { width: 100%; height: 200px; background: #000; margin: 10px 0; border: 4px solid #fff; object-fit: cover; }
-        .ability-box { background: rgba(255,255,255,0.7); border-radius: 10px; padding: 10px; margin-top: 10px; min-height: 120px; border: 1px solid rgba(0,0,0,0.2); }
-        .attack-name { font-weight: bold; border-bottom: 1px solid #000; margin-bottom: 5px; display: block; }
-        .v-rule { position: absolute; bottom: 10px; left: 20px; right: 20px; background: #000; color: #fff; font-size: 8px; padding: 5px; border-radius: 5px; text-align: center; }
+        .card-name { font-size: 22px; text-transform: uppercase; font-family: 'Arial Black', sans-serif; letter-spacing: -1px; }
+        .card-hp { color: #d32f2f; font-size: 22px; font-weight: 900; }
+        .card-hp span { font-size: 10px; margin-right: 2px; }
         
-        button { background: #ffcb05; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; }
-        .color-picker { display: flex; gap: 10px; margin: 10px 0; }
-        .dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; }
+        .card-image-container { width: 100%; height: 210px; background: #000; margin: 10px 0; border: 4px solid #fff; box-shadow: inset 0 0 10px #000; overflow: hidden; position: relative; }
+        .card-image-container img { width: 100%; height: 100%; object-fit: cover; }
+        .char-sym-overlay { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; }
+
+        .ability-bar { background: #333; color: white; padding: 4px 12px; font-size: 10px; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 8px; text-transform: uppercase; }
+        .attack-box { background: rgba(255,255,255,0.9); border-radius: 8px; padding: 12px; min-height: 110px; border: 1px solid rgba(0,0,0,0.1); }
+        .attack-name { font-weight: bold; border-bottom: 2px solid #333; margin-bottom: 6px; display: block; font-size: 14px; }
+        .attack-desc { font-size: 11.5px; line-height: 1.4; font-style: italic; color: #111; }
+        
+        .footer-info { margin-top: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 5px; }
+        .v-rule { position: absolute; bottom: 12px; left: 25px; right: 25px; background: #000; color: #fff; font-size: 7px; padding: 4px; border-radius: 4px; text-align: center; line-height: 1.1; }
+
+        .btn { background: #ffcb05; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; font-size: 16px; margin-top: 10px; transition: 0.2s; text-transform: uppercase; }
+        .btn:hover { background: #e6b800; transform: translateY(-2px); }
+        
+        .color-picker { display: flex; gap: 10px; margin: 10px 0; justify-content: center; flex-wrap: wrap; }
+        .dot { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; }
+        .dot.active { border-color: white; box-shadow: 0 0 10px white; }
+
+        @media print { .setup-panel, .no-print { display: none; } body { background: white; } #pokemon-card { display: block; box-shadow: none; } }
     </style>
 </head>
 <body>
 
-    <div class="setup-panel">
-        <h2>Crea la tua Carta V</h2>
-        <label>Scegli Personaggio:</label>
+    <div class="setup-panel no-print">
+        <h2>Card Creator: Bibbia & Costituzione</h2>
+        
+        <label>1. Seleziona Personaggio:</label>
         <select id="char">
-            <option value="Caino">Caino (Genesi)</option>
-            <option value="Noè">Noè (Arca)</option>
-            <option value="Agar">Agar (Straniera)</option>
-            <option value="Mosè">Mosè (Libertà)</option>
+            <option value="Caino" data-sym="C">Caino (Genesi)</option>
+            <option value="Noè" data-sym="N">Noè (Genesi / Corano)</option>
+            <option value="Abramo" data-sym="A">Abramo (Genesi / Corano)</option>
+            <option value="Agar" data-sym="Ag">Agar (Genesi / Corano)</option>
+            <option value="Sara" data-sym="S">Sara (Genesi)</option>
+            <option value="Giacobbe" data-sym="G">Giacobbe (Genesi / Corano)</option>
+            <option value="Lia" data-sym="Li">Lia (Genesi)</option>
+            <option value="Rachele" data-sym="R">Rachele (Genesi)</option>
+            <option value="Giuseppe" data-sym="Gi">Giuseppe (Genesi / Corano)</option>
+            <option value="Mosè" data-sym="M">Mosè (Esodo / Corano)</option>
+            <option value="Sherazad" data-sym="Sh">Sherazad (Mille e una notte)</option>
         </select>
 
-        <label>Scegli Articolo (HP):</label>
+        <label>2. Seleziona Articolo:</label>
         <select id="art">
-            <option value="3">Articolo 3 (Uguaglianza)</option>
-            <option value="10">Articolo 10 (Asilo)</option>
-            <option value="11">Articolo 11 (Pace)</option>
+            <option value="3">Art. 3 - Uguaglianza</option>
+            <option value="9">Art. 9 - Tutela dell'ambiente</option>
+            <option value="10">Art. 10 - Stranieri e rifugiati</option>
+            <option value="11">Art. 11 - Pace e ripudio della guerra</option>
+            <option value="27">Art. 27 - Responsabilità penale</option>
+            <option value="32">Art. 32 - Diritto alla salute</option>
         </select>
 
-        <label>Colore Carta (Tipo):</label>
-        <div class="color-picker">
-            <div class="dot" style="background: #ff5f6d" onclick="setCol('#ff5f6d')"></div>
-            <div class="dot" style="background: #71b7ff" onclick="setCol('#71b7ff')"></div>
-            <div class="dot" style="background: #78e08f" onclick="setCol('#78e08f')"></div>
-            <div class="dot" style="background: #f8c291" onclick="setCol('#f8c291')"></div>
+        <label>3. Colore della Carta (Tipo):</label>
+        <div class="color-picker" id="colorPicker">
+            <div class="dot active" style="background: linear-gradient(145deg, #ff5f6d, #b91d1d)" data-color="linear-gradient(145deg, #ff5f6d, #b91d1d)" onclick="selectColor(this)"></div>
+            <div class="dot" style="background: linear-gradient(145deg, #4facfe, #0061ff)" data-color="linear-gradient(145deg, #4facfe, #0061ff)" onclick="selectColor(this)"></div>
+            <div class="dot" style="background: linear-gradient(145deg, #43e97b, #38f9d7)" data-color="linear-gradient(145deg, #43e97b, #38f9d7)" onclick="selectColor(this)"></div>
+            <div class="dot" style="background: linear-gradient(145deg, #f6d365, #fda085)" data-color="linear-gradient(145deg, #f6d365, #fda085)" onclick="selectColor(this)"></div>
+            <div class="dot" style="background: linear-gradient(145deg, #667eea, #764ba2)" data-color="linear-gradient(145deg, #667eea, #764ba2)" onclick="selectColor(this)"></div>
+            <div class="dot" style="background: linear-gradient(145deg, #ffd700, #b8860b)" data-color="linear-gradient(145deg, #ffd700, #b8860b)" onclick="selectColor(this)"></div>
         </div>
 
-        <label>Carica Immagine:</label>
+        <label>4. Immagine Personaggio:</label>
         <input type="file" id="imgInput" accept="image/*">
 
-        <label>Spiegazione (Attacco):</label>
-        <textarea id="desc" placeholder="Come si collega l'articolo al personaggio?"></textarea>
+        <label>5. Spiegazione del Collegamento:</label>
+        <textarea id="desc" rows="3" placeholder="Perché questo personaggio rappresenta questo articolo?"></textarea>
 
-        <button onclick="generate()">GENERA CARTA POKÉMON V</button>
+        <label>6. Associazione di oggi:</label>
+        <input type="text" id="assoc" placeholder="Es: Emergency, Amnesty, Legambiente...">
+
+        <button class="btn" onclick="generate()">Genera Carta V</button>
     </div>
 
     <div id="pokemon-card">
         <div class="card-header">
-            <span class="card-name" id="out-name">NOME</span>
-            <span class="card-hp">HP <strong id="out-hp">180</strong></span>
+            <span class="card-name" id="out-name">NOME V</span>
+            <div class="card-hp"><span>HP</span><span id="out-hp">180</span></div>
         </div>
-        <img id="out-img" class="card-image" src="">
-        <div style="font-size: 10px; font-weight: bold; margin-bottom: 5px;">COSTITUZIONE ITALIANA</div>
-        <div class="ability-box">
-            <span class="attack-name" id="out-art">Articolo</span>
-            <p id="out-desc" style="font-size: 12px; font-style: italic;"></p>
+        
+        <div class="card-image-container">
+            <img id="out-img" src="" alt="">
+            <div class="char-sym-overlay" id="out-sym">C</div>
         </div>
+
+        <div class="ability-bar">
+            <span>COSTITUZIONE ITALIANA</span>
+            <span id="out-art-id">ART. 0</span>
+        </div>
+
+        <div class="attack-box">
+            <span class="attack-name" id="out-art-title">Titolo Articolo</span>
+            <p id="out-desc" class="attack-desc">La spiegazione apparirà qui...</p>
+        </div>
+
+        <div class="footer-info">
+            Associazione: <span id="out-assoc" style="color:#d32f2f">---</span>
+        </div>
+
         <div class="v-rule">
-            <strong>REGOLA V:</strong> Se il diritto viene negato, la Repubblica interviene per proteggere la dignità umana.
+            <strong>REGOLA V:</strong> Se un diritto fondamentale viene calpestato, la Repubblica ha il dovere di intervenire per ripristinare la dignità della persona umana.
         </div>
     </div>
 
-    <script>
-        let selectedColor = "linear-gradient(145deg, #ffd700, #b8860b)";
+    <div class="no-print" id="printSection" style="display:none; margin-bottom: 40px;">
+        <button class="btn" onclick="window.print()" style="background: #2a75bb; color: white;">Stampa la tua Carta</button>
+    </div>
 
-        function setCol(c) {
-            selectedColor = c;
+    <script>
+        let currentBg = "linear-gradient(145deg, #ff5f6d, #b91d1d)";
+
+        function selectColor(el) {
+            document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+            currentBg = el.getAttribute('data-color');
         }
 
         function generate() {
-            document.getElementById('out-name').innerText = document.getElementById('char').value + " V";
-            document.getElementById('out-hp').innerText = document.getElementById('art').value + "0";
-            document.getElementById('out-art').innerText = "Potere dell'Articolo " + document.getElementById('art').value;
-            document.getElementById('out-desc').innerText = document.getElementById('desc').value;
-            document.getElementById('pokemon-card').style.background = selectedColor;
-            document.getElementById('pokemon-card').style.display = "block";
+            const charSelect = document.getElementById('char');
+            const artSelect = document.getElementById('art');
+            
+            const name = charSelect.value;
+            const sym = charSelect.options[charSelect.selectedIndex].getAttribute('data-sym');
+            const artNum = artSelect.value;
+            const artFullText = artSelect.options[artSelect.selectedIndex].text;
+            const description = document.getElementById('desc').value || "Spiegazione non inserita.";
+            const association = document.getElementById('assoc').value || "Associazione non indicata.";
 
+            // Aggiornamento Campi Carta
+            document.getElementById('out-name').innerText = name + " V";
+            document.getElementById('out-sym').innerText = sym;
+            document.getElementById('out-hp').innerText = artNum + "0";
+            document.getElementById('out-art-id').innerText = "RIF. ARTICOLO " + artNum;
+            document.getElementById('out-art-title').innerText = artFullText.split(' - ')[1];
+            document.getElementById('out-desc').innerText = description;
+            document.getElementById('out-assoc').innerText = association;
+            
+            // Colore di fondo
+            document.getElementById('pokemon-card').style.background = currentBg;
+            
+            // Caricamento Immagine
             const file = document.getElementById('imgInput').files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = e => document.getElementById('out-img').src = e.target.result;
                 reader.readAsDataURL(file);
             }
+
+            document.getElementById('pokemon-card').style.display = "block";
+            document.getElementById('printSection').style.display = "block";
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
     </script>
 </body>
