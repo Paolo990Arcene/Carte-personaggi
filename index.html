@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Costituzione Pokémon Edition - Pro</title>
+    <title>Costituzione Pokémon Edition - Image Export</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --pkm-color: #ffcb05; }
         body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         
-        /* Pannello di Controllo */
         .setup-panel { background: #2a2a2a; padding: 25px; border-radius: 15px; width: 100%; max-width: 650px; margin-bottom: 20px; border: 2px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         h2 { color: #ffcb05; text-align: center; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; }
         label { font-weight: bold; font-size: 13px; color: #aaa; display: block; margin-top: 15px; }
@@ -22,18 +22,20 @@
 
         /* STILE CARTA POKEMON V */
         #pokemon-card {
-            width: 360px; height: 510px; border-radius: 20px; position: relative;
+            width: 360px; height: 510px; border-radius: 22px; position: relative;
             padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            background: linear-gradient(145deg, #ffd700, #b8860b);
+            background: linear-gradient(145deg, #ff5f6d, #b91d1d);
             color: #000; overflow: hidden; border: 10px solid #f1f1f1;
-            display: none; margin: 20px auto;
+            margin: 20px auto; 
+            /* Importante per l'esportazione */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .card-name { font-size: 22px; text-transform: uppercase; font-family: 'Arial Black', sans-serif; letter-spacing: -1px; }
+        .card-name { font-size: 20px; text-transform: uppercase; font-family: 'Arial Black', sans-serif; letter-spacing: -1px; }
         .card-hp { color: #d32f2f; font-size: 22px; font-weight: 900; }
         .card-hp span { font-size: 10px; margin-right: 2px; }
         
-        /* Cornice Immagine con Zoom/Posizionamento */
         .card-image-container { 
             width: 100%; height: 210px; background: #000; margin: 10px 0; 
             border: 4px solid #fff; box-shadow: inset 0 0 10px #000; 
@@ -42,32 +44,34 @@
         #out-img { 
             width: 100%; height: 100%; 
             object-fit: cover; 
-            transition: transform 0.1s, object-position 0.1s;
+            transform-origin: center;
         }
-        .char-sym-overlay { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; }
+        .char-sym-overlay { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #000; z-index: 10; }
 
         .ability-bar { background: #333; color: white; padding: 4px 12px; font-size: 10px; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 8px; text-transform: uppercase; }
-        .attack-box { background: rgba(255,255,255,0.9); border-radius: 8px; padding: 12px; min-height: 110px; border: 1px solid rgba(0,0,0,0.1); }
+        .attack-box { background: rgba(255,255,255,0.92); border-radius: 8px; padding: 12px; min-height: 105px; border: 1px solid rgba(0,0,0,0.1); }
         .attack-name { font-weight: bold; border-bottom: 2px solid #333; margin-bottom: 6px; display: block; font-size: 14px; }
-        .attack-desc { font-size: 11.5px; line-height: 1.4; font-style: italic; color: #111; }
+        .attack-desc { font-size: 11px; line-height: 1.3; font-style: italic; color: #111; margin: 0; }
         
-        .footer-info { margin-top: 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 5px; }
-        .v-rule { position: absolute; bottom: 12px; left: 25px; right: 25px; background: #000; color: #fff; font-size: 7px; padding: 4px; border-radius: 4px; text-align: center; line-height: 1.1; }
+        .footer-info { margin-top: 8px; font-size: 9px; font-weight: bold; text-transform: uppercase; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 4px; line-height: 1.2; }
+        .v-rule { position: absolute; bottom: 10px; left: 25px; right: 25px; background: #000; color: #fff; font-size: 7px; padding: 4px; border-radius: 4px; text-align: center; line-height: 1.1; }
 
         .btn { background: #ffcb05; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; font-size: 16px; margin-top: 15px; transition: 0.2s; text-transform: uppercase; }
         .btn:hover { background: #e6b800; transform: translateY(-2px); }
+        .btn-download { background: #27ae60; color: white; margin-top: 10px; }
+        .btn-download:hover { background: #219150; }
         
         .color-picker { display: flex; gap: 10px; margin: 10px 0; justify-content: center; flex-wrap: wrap; }
         .dot { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; }
         .dot.active { border-color: white; box-shadow: 0 0 10px white; }
 
-        @media print { .setup-panel, .no-print { display: none; } body { background: white; } #pokemon-card { display: block; box-shadow: none; margin: 0; } }
+        @media print { .setup-panel, .no-print { display: none; } body { background: white; } #pokemon-card { margin: 0; box-shadow: none; } }
     </style>
 </head>
 <body>
 
     <div class="setup-panel no-print">
-        <h2>Pokémon Card Editor - Pro</h2>
+        <h2>Pokémon Card Editor - PNG Export</h2>
         
         <label>1. Scegli il Personaggio:</label>
         <select id="char">
@@ -110,7 +114,7 @@
         <div class="img-controls">
             <div class="control-row">
                 <span>Zoom:</span>
-                <input type="range" id="zoom" min="1" max="3" step="0.1" value="1" oninput="updateImgStyle()">
+                <input type="range" id="zoom" min="1" max="5" step="0.1" value="1" oninput="updateImgStyle()">
             </div>
             <div class="control-row">
                 <span>Orizzontale:</span>
@@ -128,32 +132,32 @@
         <label>6. Una ONG che tutela quel diritto e descrizione:</label>
         <textarea id="assoc" rows="2" placeholder="Inserisci il nome della ONG e cosa fa oggi per proteggere questo diritto..."></textarea>
 
-        <button class="btn" onclick="generate()">Genera Carta V</button>
+        <button class="btn" onclick="generate()">Applica Modifiche alla Carta</button>
     </div>
 
     <div id="pokemon-card">
         <div class="card-header">
-            <span class="card-name" id="out-name">NOME V</span>
-            <div class="card-hp"><span>HP</span><span id="out-hp">180</span></div>
+            <span class="card-name" id="out-name">CAINO V</span>
+            <div class="card-hp"><span>HP</span><span id="out-hp">30</span></div>
         </div>
         
         <div class="card-image-container">
-            <img id="out-img" src="" alt="">
+            <img id="out-img" src="https://via.placeholder.com/400x300?text=Carica+Foto" alt="">
             <div class="char-sym-overlay" id="out-sym">C</div>
         </div>
 
         <div class="ability-bar">
             <span>COSTITUZIONE ITALIANA</span>
-            <span id="out-art-id">ART. 0</span>
+            <span id="out-art-id">RIF. ARTICOLO 3</span>
         </div>
 
         <div class="attack-box">
-            <span class="attack-name" id="out-art-title">Titolo Articolo</span>
-            <p id="out-desc" class="attack-desc">La spiegazione apparirà qui...</p>
+            <span class="attack-name" id="out-art-title">Uguaglianza</span>
+            <p id="out-desc" class="attack-desc">Spiegazione del collegamento...</p>
         </div>
 
         <div class="footer-info">
-            <span id="out-assoc">---</span>
+            <span id="out-assoc">ONG che tutela questo diritto...</span>
         </div>
 
         <div class="v-rule">
@@ -161,8 +165,9 @@
         </div>
     </div>
 
-    <div class="no-print" id="printSection" style="display:none; margin-bottom: 40px;">
-        <button class="btn" onclick="window.print()" style="background: #2a75bb; color: white;">Stampa la tua Carta</button>
+    <div class="no-print" id="actionButtons" style="display:none; margin-bottom: 50px; width: 360px;">
+        <button class="btn btn-download" onclick="downloadCard()">📥 SCARICA IMMAGINE (PNG)</button>
+        <button class="btn" style="background: #2a75bb; color: white;" onclick="window.print()">🖨️ STAMPA PDF</button>
     </div>
 
     <script>
@@ -172,9 +177,7 @@
             document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
             el.classList.add('active');
             currentBg = el.getAttribute('data-color');
-            if(document.getElementById('pokemon-card').style.display === "block") {
-                document.getElementById('pokemon-card').style.background = currentBg;
-            }
+            document.getElementById('pokemon-card').style.background = currentBg;
         }
 
         function previewImage(input) {
@@ -182,8 +185,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('out-img').src = e.target.result;
-                    // Mostra la carta per permettere la regolazione
-                    document.getElementById('pokemon-card').style.display = "block";
+                    document.getElementById('actionButtons').style.display = "block";
                     updateImgStyle();
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -204,29 +206,39 @@
             const charSelect = document.getElementById('char');
             const artSelect = document.getElementById('art');
             
-            const name = charSelect.value;
-            const sym = charSelect.options[charSelect.selectedIndex].getAttribute('data-sym');
+            document.getElementById('out-name').innerText = charSelect.value + " V";
+            document.getElementById('out-sym').innerText = charSelect.options[charSelect.selectedIndex].getAttribute('data-sym');
+            
             const artNum = artSelect.value;
-            const artFullText = artSelect.options[artSelect.selectedIndex].text;
-            const description = document.getElementById('desc').value || "Spiegazione non inserita.";
-            const association = document.getElementById('assoc').value || "ONG non indicata.";
-
-            // Aggiornamento Campi Carta
-            document.getElementById('out-name').innerText = name + " V";
-            document.getElementById('out-sym').innerText = sym;
             document.getElementById('out-hp').innerText = artNum + "0";
             document.getElementById('out-art-id').innerText = "RIF. ARTICOLO " + artNum;
-            document.getElementById('out-art-title').innerText = artFullText.split(' - ')[1];
-            document.getElementById('out-desc').innerText = description;
-            document.getElementById('out-assoc').innerText = association;
             
-            // Colore di fondo
+            const artFullText = artSelect.options[artSelect.selectedIndex].text;
+            document.getElementById('out-art-title').innerText = artFullText.split(' - ')[1];
+            
+            document.getElementById('out-desc').innerText = document.getElementById('desc').value || "Spiegazione non inserita.";
+            document.getElementById('out-assoc').innerText = document.getElementById('assoc').value || "ONG non indicata.";
             document.getElementById('pokemon-card').style.background = currentBg;
             
-            // Mostra tutto
-            document.getElementById('pokemon-card').style.display = "block";
-            document.getElementById('printSection').style.display = "block";
+            document.getElementById('actionButtons').style.display = "block";
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // FUNZIONE PER SCARICARE LA CARTA COME PNG
+        function downloadCard() {
+            const card = document.getElementById('pokemon-card');
+            
+            // Usa html2canvas per scansionare il div e creare un'immagine
+            html2canvas(card, {
+                useCORS: true,
+                scale: 2, // Aumenta la qualità dell'immagine
+                backgroundColor: null // Mantiene la trasparenza degli angoli se presente
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Carta_${document.getElementById('char').value}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
         }
     </script>
 </body>
